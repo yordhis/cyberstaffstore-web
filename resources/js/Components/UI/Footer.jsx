@@ -69,12 +69,6 @@ export default function Footer({ settings }) {
               <li><a href="#servicios" className="hover:text-emerald-400 transition-colors">Servicios Tecnológicos</a></li>
               <li><a href="#portafolio" className="hover:text-emerald-400 transition-colors">Proyectos de Clientes</a></li>
               <li><a href="#cotizador" className="hover:text-emerald-400 transition-colors font-medium text-emerald-400">Cotizador de Proyectos</a></li>
-              <li>
-                <Link href="/admin/login" className="hover:text-emerald-400 transition-colors flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  Acceso CMS Administración
-                </Link>
-              </li>
             </ul>
           </div>
 

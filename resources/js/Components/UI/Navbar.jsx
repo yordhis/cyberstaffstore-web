@@ -87,13 +87,6 @@ export default function Navbar({ settings }) {
 
           {/* Right Action CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
-            <Link
-              href="/admin/login"
-              className="text-xs text-slate-400 hover:text-emerald-400 px-3 py-2 transition-colors flex items-center gap-1"
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              CMS Admin
-            </Link>
             <button
               onClick={() => scrollToSection('cotizador')}
               className="relative inline-flex items-center justify-center px-5 py-2.5 text-xs font-bold text-slate-950 bg-gradient-to-r from-emerald-400 to-teal-300 rounded-full shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:scale-105 active:scale-95 transition-all group overflow-hidden"
@@ -157,13 +150,6 @@ export default function Navbar({ settings }) {
               <MessageSquare className="w-4 h-4" />
               Cotizar mi Proyecto por WhatsApp
             </button>
-            <Link
-              href="/admin/login"
-              className="w-full py-2 text-xs text-center text-slate-400 hover:text-emerald-400 flex items-center justify-center gap-1"
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              Acceso a CMS de Administración
-            </Link>
           </div>
         </div>
       )}
