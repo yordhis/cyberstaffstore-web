@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Head, useForm, router } from '@inertiajs/react';
 import AdminLayout from '../../../Layouts/AdminLayout';
-import { Package, Plus, Edit, Trash2, ExternalLink, X, Save, CheckCircle2 } from 'lucide-react';
+import { Package, Plus, Edit, Trash2, ExternalLink, X, Save, Upload, Link as LinkIcon } from 'lucide-react';
 
 export default function Index({ products }) {
   const [editingProduct, setEditingProduct] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [imageInputMode, setImageInputMode] = useState('url'); // 'url' | 'file'
+  const [filePreview, setFilePreview] = useState(null);
 
-  const { data, setData, post, put, processing, errors, reset } = useForm({
+  const { data, setData, post, processing, errors, reset } = useForm({
     id: null,
     slug: '',
     name: '',
@@ -16,6 +18,7 @@ export default function Index({ products }) {
     badge: '⚡ Sistema Listo para Usar',
     demo_url: '',
     image_url: '',
+    image_file: null,
     features: ['Control en tiempo real', 'Facturación POS', 'Reportes PDF'],
     is_active: true,
     order: 0,
@@ -24,6 +27,8 @@ export default function Index({ products }) {
   const openCreateModal = () => {
     reset();
     setEditingProduct(null);
+    setImageInputMode('url');
+    setFilePreview(null);
     setShowModal(true);
   };
 
@@ -38,17 +43,23 @@ export default function Index({ products }) {
       badge: product.badge || 'SaaS',
       demo_url: product.demo_url || '',
       image_url: product.image_url || '',
+      image_file: null,
       features: product.features || [],
       is_active: product.is_active,
       order: product.order || 0,
     });
+    setImageInputMode(product.image_url?.startsWith('/storage/') ? 'file' : 'url');
+    setFilePreview(null);
     setShowModal(true);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (editingProduct) {
-      put(`/admin/products/${editingProduct.id}`, {
+      router.post(`/admin/products/${editingProduct.id}`, {
+        _method: 'put',
+        ...data,
+      }, {
         onSuccess: () => setShowModal(false)
       });
     } else {
@@ -99,6 +110,12 @@ export default function Index({ products }) {
                   </span>
                 </div>
 
+                {p.image_url && (
+                  <div className="h-36 rounded-xl overflow-hidden border border-emerald-500/20 bg-slate-950">
+                    <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
+                  </div>
+                )}
+
                 <h3 className="text-xl font-bold text-white">{p.name}</h3>
                 <p className="text-xs font-semibold text-emerald-400 uppercase">{p.tagline}</p>
                 <p className="text-xs text-slate-300 line-clamp-3">{p.description}</p>
@@ -137,8 +154,8 @@ export default function Index({ products }) {
 
       {/* Modal Form */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
-          <div className="relative w-full max-w-xl rounded-3xl bg-[#042025] border border-emerald-500/40 p-6 shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+          <div className="relative w-full max-w-xl rounded-3xl bg-[#042025] border border-emerald-500/40 p-6 shadow-2xl space-y-4 my-8">
             <div className="flex items-center justify-between pb-3 border-b border-emerald-500/20">
               <h3 className="text-sm font-bold text-white">
                 {editingProduct ? 'Editar Producto Demo' : 'Crear Nuevo Producto Demo'}
@@ -194,14 +211,87 @@ export default function Index({ products }) {
                 />
               </div>
 
-              <div>
-                <label className="block text-slate-300 font-bold mb-1">URL Imagen Preview</label>
-                <input
-                  type="text"
-                  value={data.image_url}
-                  onChange={e => setData('image_url', e.target.value)}
-                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-emerald-500/20 text-white"
-                />
+              {/* Dual Mode Image Selector */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-slate-300 font-bold">Imagen del Producto / Demo</label>
+                  <div className="flex bg-slate-950 p-1 rounded-lg border border-emerald-500/20 text-[11px]">
+                    <button
+                      type="button"
+                      onClick={() => setImageInputMode('url')}
+                      className={`px-2.5 py-1 rounded-md font-bold transition-all flex items-center gap-1 ${
+                        imageInputMode === 'url'
+                          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      <LinkIcon className="w-3 h-3" />
+                      <span>Enlace URL</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImageInputMode('file')}
+                      className={`px-2.5 py-1 rounded-md font-bold transition-all flex items-center gap-1 ${
+                        imageInputMode === 'file'
+                          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      <Upload className="w-3 h-3" />
+                      <span>Subir Archivo (PNG/JPG)</span>
+                    </button>
+                  </div>
+                </div>
+
+                {imageInputMode === 'url' ? (
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="https://ejemplo.com/imagen.png o /images/demo.png"
+                      value={data.image_url}
+                      onChange={e => setData('image_url', e.target.value)}
+                      className="w-full p-2.5 rounded-xl bg-slate-950 border border-emerald-500/20 text-white placeholder-slate-600"
+                    />
+                    {data.image_url && (
+                      <div className="mt-2 relative h-28 rounded-xl overflow-hidden border border-emerald-500/20 bg-slate-950 flex items-center justify-center">
+                        <img src={data.image_url} alt="Vista Previa" className="h-full w-full object-cover" />
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="relative border-2 border-dashed border-emerald-500/30 rounded-xl p-4 text-center hover:border-emerald-400/60 transition-all bg-slate-950/60 cursor-pointer">
+                      <input
+                        type="file"
+                        accept="image/png, image/jpeg, image/jpg, image/webp, image/svg+xml"
+                        onChange={e => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            setData('image_file', file);
+                            setFilePreview(URL.createObjectURL(file));
+                          }
+                        }}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                      <div className="flex flex-col items-center gap-1.5 pointer-events-none">
+                        <Upload className="w-6 h-6 text-emerald-400" />
+                        <span className="text-slate-300 font-bold">Seleccionar archivo desde tu PC</span>
+                        <span className="text-[10px] text-slate-500">Soporta PNG, JPG, JPEG, WEBP o SVG (Máx 5MB)</span>
+                      </div>
+                    </div>
+
+                    {(filePreview || data.image_url) && (
+                      <div className="relative h-28 rounded-xl overflow-hidden border border-emerald-500/20 bg-slate-950 flex items-center justify-center">
+                        <img src={filePreview || data.image_url} alt="Vista previa del archivo" className="h-full w-full object-cover" />
+                        {data.image_file && (
+                          <span className="absolute bottom-1 right-1 bg-emerald-500 text-slate-950 font-black text-[9px] px-2 py-0.5 rounded shadow truncate max-w-[200px]">
+                            Archivo listo: {data.image_file.name}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div>
@@ -219,14 +309,14 @@ export default function Index({ products }) {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-900 text-slate-300 font-bold"
+                  className="px-4 py-2 rounded-xl bg-slate-900 text-slate-300 font-bold hover:bg-slate-800"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={processing}
-                  className="px-5 py-2 rounded-xl bg-emerald-400 text-slate-950 font-bold flex items-center gap-1.5"
+                  className="px-5 py-2 rounded-xl bg-emerald-400 text-slate-950 font-bold flex items-center gap-1.5 hover:bg-emerald-300 transition-all"
                 >
                   <Save className="w-4 h-4" />
                   <span>Guardar Cambios</span>

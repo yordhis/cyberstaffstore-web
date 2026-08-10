@@ -30,10 +30,18 @@ class ProductController extends Controller
             'badge' => 'required|string|max:100',
             'demo_url' => 'nullable|url',
             'image_url' => 'nullable|string',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:5120',
             'features' => 'nullable|array',
             'is_active' => 'boolean',
             'order' => 'integer',
         ]);
+
+        if ($request->hasFile('image_file')) {
+            $path = $request->file('image_file')->store('products', 'public');
+            $validated['image_url'] = '/storage/' . $path;
+        }
+
+        unset($validated['image_file']);
 
         Product::create($validated);
 
@@ -50,10 +58,18 @@ class ProductController extends Controller
             'badge' => 'required|string|max:100',
             'demo_url' => 'nullable|url',
             'image_url' => 'nullable|string',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:5120',
             'features' => 'nullable|array',
             'is_active' => 'boolean',
             'order' => 'integer',
         ]);
+
+        if ($request->hasFile('image_file')) {
+            $path = $request->file('image_file')->store('products', 'public');
+            $validated['image_url'] = '/storage/' . $path;
+        }
+
+        unset($validated['image_file']);
 
         $product->update($validated);
 

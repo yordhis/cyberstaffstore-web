@@ -29,12 +29,20 @@ class ProjectController extends Controller
             'summary' => 'required|string|max:255',
             'description' => 'required|string',
             'image_url' => 'nullable|string',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:5120',
             'demo_url' => 'nullable|url',
             'tech_stack' => 'nullable|array',
             'metrics' => 'nullable|string',
             'is_featured' => 'boolean',
             'order' => 'integer',
         ]);
+
+        if ($request->hasFile('image_file')) {
+            $path = $request->file('image_file')->store('projects', 'public');
+            $validated['image_url'] = '/storage/' . $path;
+        }
+
+        unset($validated['image_file']);
 
         Project::create($validated);
 
@@ -50,12 +58,20 @@ class ProjectController extends Controller
             'summary' => 'required|string|max:255',
             'description' => 'required|string',
             'image_url' => 'nullable|string',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:5120',
             'demo_url' => 'nullable|url',
             'tech_stack' => 'nullable|array',
             'metrics' => 'nullable|string',
             'is_featured' => 'boolean',
             'order' => 'integer',
         ]);
+
+        if ($request->hasFile('image_file')) {
+            $path = $request->file('image_file')->store('projects', 'public');
+            $validated['image_url'] = '/storage/' . $path;
+        }
+
+        unset($validated['image_file']);
 
         $project->update($validated);
 

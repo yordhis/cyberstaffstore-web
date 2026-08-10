@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
 import { CyberLogo } from '../Components/UI/Navbar';
-import { 
+import {
   LayoutDashboard, Package, Briefcase, Calculator, Users, Settings, LogOut, Menu, X, Shield, ExternalLink
 } from 'lucide-react';
 
@@ -14,8 +14,8 @@ export default function AdminLayout({ children, title }) {
   };
 
   const navItems = [
-    { label: 'Dashboard', href: '/admin', icon: LayoutDashboard, routeName: 'admin.dashboard' },
-    { label: 'Demos (CyberStock/Gym)', href: '/admin/products', icon: Package, routeName: 'admin.products.index' },
+    { label: 'Panel', href: '/admin', icon: LayoutDashboard, routeName: 'admin.dashboard' },
+    { label: 'Demos', href: '/admin/products', icon: Package, routeName: 'admin.products.index' },
     { label: 'Portafolio de Clientes', href: '/admin/projects', icon: Briefcase, routeName: 'admin.projects.index' },
     { label: 'Tarifas del Cotizador', href: '/admin/quote-options', icon: Calculator, routeName: 'admin.quote-options.index' },
     { label: 'Leads & Cotizaciones', href: '/admin/leads', icon: Users, routeName: 'admin.leads.index' },
@@ -24,11 +24,11 @@ export default function AdminLayout({ children, title }) {
 
   return (
     <div className="min-h-screen bg-[#021417] text-slate-100 flex font-sans">
-      
+
       {/* Sidebar for Desktop */}
       <aside className="hidden lg:flex lg:flex-col w-64 bg-[#041e23] border-r border-emerald-500/20 p-5 justify-between shrink-0">
         <div className="space-y-8">
-          
+
           {/* Brand Header */}
           <div className="pb-4 border-b border-emerald-500/20">
             <CyberLogo />
@@ -46,11 +46,10 @@ export default function AdminLayout({ children, title }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                    isActive
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 glow-emerald'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
-                  }`}
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${isActive
+                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 glow-emerald'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
+                    }`}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{item.label}</span>
@@ -83,7 +82,7 @@ export default function AdminLayout({ children, title }) {
 
       {/* Main Content Wrapper */}
       <div className="flex-1 flex flex-col min-w-0">
-        
+
         {/* Topbar Header */}
         <header className="bg-[#041e23]/80 backdrop-blur-md border-b border-emerald-500/20 py-3.5 px-4 sm:px-8 flex items-center justify-between">
           <div className="flex items-center gap-3">
